@@ -1762,6 +1762,7 @@ OpenSSL支持更灵活的语法来指定密码,如前面描述的OpenSSL文档�
 
 [13.07.01]:../Chapter_13/13.07.01_Account_Management_Statements.md
 [06.02.02]:06.02.02_Privilege_System_Grant_Tables.md
+[06.03.01]：06.03.01_User_Names_and_Passwords.md
 [06.03.07]:06.03.07_Pluggable_Authentication.md
 [04.04.07]:../Chapter_04/04.04.07_mysql_upgrade_Check_and_Upgrade_MySQL_Tables.md
 [10.01.04]:../Chapter_10/10.01.04_Connection_Character_Sets_and_Collations.md
