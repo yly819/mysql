@@ -1,94 +1,5 @@
 
 
-##6.3.5 分配帐户密码  ##
-
-为客户所需的凭证,连接到MySQL服务器可以包含一个密码。本节描述如何为MySQL账户分配密码。在MySQL 5.6,也有可能为客户使用插件进行身份验证。更多信息,参考[6.3.7,“可插入身份验证”][06.03.07]。
-
-指定一个密码,当你创建一个新的帐户`CREATE USER`,包括一个`IDENTIFIED BY`语句:
-
-```sql
-    mysql> CREATE USER 'jeffrey'@'localhost'
-        -> IDENTIFIED BY 'mypass';
-```
-
-指定或更改密码为现有的账户,设置密码的一种方法:
-
-```sql
-    mysql> SET PASSWORD FOR
-        -> 'jeffrey'@'localhost' = PASSWORD('mypass');
-```
-
-MySQL存储密码的用户表在MySQL数据库。只有用户如根,有更新访问mysql数据库可以更改密码为其他用户。如果你不作为匿名用户连接,你可以改变你自己的密码,省略了`For`语句：
-
-```sql
-    mysql> SET PASSWORD = PASSWORD('mypass');
-```
-
-`old_passwords`系统变量值决定了所使用的哈希方法`PASSWORD（）`。如果你指定密码使用功能和设置密码拒绝密码是不正确的格式,它可能需要设置`old_passwords`改变哈希法。为描述允许的值,参考[5.1.4,“服务器系统变量”][05.01.04]
-
-在mysql5.6中，启用`read_only`这个系统参数防止其他没有`super`权限的用户用作`set password`声明。
-
-你可以使用`GRANT USAGE`语句来全局(ON *.*)设置账号指定他的密码这样不会影响当前用户的权限。
-
-```sql
-    mysql> GRANT USAGE ON *.* TO 'jeffrey'@'localhost'
-        -> IDENTIFIED BY 'mypass';
-```
-
-从命令行设置密码，使用`mysqladmin`命令：
-
-```sql
-    shell> mysqladmin -u user_name -h host_name password "newpwd"
-```
-
-这个命令设置帐户的密码和`user_name`是匹配在`user`表的行，允许连接客户端主机在`host`列。
-
-在身份验证期间当一个客户端连接到服务器,MySQL对待密码的`user`表作为加密哈希值(值,密码()将返回的密码).当指定一个密码,一个帐户,重要的是要存储加密的值,而不是明文密码。使用以下指南:
-
-* 当你分配一个密码使用`CREATE USER`, `GRANT with`和`IDENTIFIED BY`的语句,或`mysqladmin password命令,他们为你加密密码。指定文字明文密码:
-
-```sql
-    mysql> CREATE USER 'jeffrey'@'localhost'
-		-> IDENTIFIED BY 'mypass';
-```
-
-* 为`CREATE USER`和`GRANT`,你可以避免发送明文密码如果你知道哈希值使用`PASSWORD()`将返回的密码。指定前面的哈希值关键字密码:
-
-```sql
-    mysql> CREATE USER 'jeffrey'@'localhost'
-		-> IDENTIFIED BY PASSWORD '*90E462C37378CED12064BB3388827D2BA3A9B689';
-```
-
-* 当你分配一个账户一个非空的密码使用`SET PASSWORD`,你必须使用`PASSWORD()`函数加密密码,否则密码存储为明文。假设你分配一个密码如下:
-
-```sql
-    mysql> SET PASSWORD FOR
-		-> 'jeffrey'@'localhost' = 'mypass';
-```
-
-结果是,文字值“mypass”存储密码的user表,而不是加密的值。当jeffrey试图使用这个密码连接到服务器,这个值是加密和比较值存储在用户表。然而,存储的值字面字符串'mypass',所以比较失败,服务器拒绝连接与一个拒绝访问错误。
-
->**注意**
->
->`PASSWORD()`加密不同于Unix密码加密。参考[6.3.1”,用户名和密码”][06.03.01]。
-
-最好是分配密码使用`SET PASSWORD`, `GRANT`,或者`mysqladmin`,但也是可以直接修改用户表。在这种情况下,你还必须使用`FLUSH PRIVILEGES`导致服务器重读这个授权表。否则,直到你重新启动服务器才生效。
-
-* 建立一个新账户密码,提供一个值为`Password`列:
-
-```sql
-    mysql> INSERT INTO mysql.user (Host,User,Password)
-		-> VALUES('localhost','jeffrey',PASSWORD('mypass'));
-	mysql> FLUSH PRIVILEGES;
-```
-
-* 改变现有的账户的密码,使用UPDATE设置Password列值:
-
-```sql
-    mysql> UPDATE mysql.user SET Password = PASSWORD('bagel')
-		-> WHERE Host = 'localhost' AND User = 'francis';
-	mysql> FLUSH PRIVILEGES;
-```
 
 ## 6.3.6. 密码过期和沙箱模式 ##
 
@@ -227,7 +138,9 @@ ALTER USER固定了不能设置`Password`列到空字符串。
 
 几个身份验证插件是可在MySQL:
 
-* 插件执行本地身份验证匹配的密码与`Password`列的账户行。在`mysql_native_password`插件实现了身份验证的基础在本机密码哈希算法。`mysql_old_password`插件实现了本地验证基于旧(pre - 4.1)密码哈希算法(现在已不使用)。参考[6.3.7.2,“本地身份验证插件”][06.03.07.02],参考[6.3.7.3,The “Old” Native Authentication Plugin”][06.03.07.03]。本地身份验证使用`mysql_native_password`是默认的账户,没有插件命名他们帐户行明确,除非服务器启动`--default-authentication-plugin`选项来改变默认的插件。
+* 插件执行本地身份验证匹配的密码与`Password`列的账户行。在`mysql_native_password`插件实现了身份验证的基础在本机密码哈希算法。`mysql_old_password`插件实现了本地验证基于旧(pre - 4.1)密码哈希算法(现在已不使用)。参考[6.3.7.2,“本地身份验证插件”]
+* 
+* .02],参考[6.3.7.3,The “Old” Native Authentication Plugin”][06.03.07.03]。本地身份验证使用`mysql_native_password`是默认的账户,没有插件命名他们帐户行明确,除非服务器启动`--default-authentication-plugin`选项来改变默认的插件。
 
 * 一个插件执行身份验证使用sha-256的密码哈希算法。这个插件匹配密码与`authentication_string`列的账户行。这个加密与本地身份验证更强大、更实用。参考[6.3.7.4,“sha - 256身份验证插件”][06.03.07.04]。
 
