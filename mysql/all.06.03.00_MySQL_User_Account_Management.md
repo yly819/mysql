@@ -129,24 +129,24 @@
 
 #### 6.3.7.2. 本地身份验证插件 ####
 
-MySQL包括两个插件,实现本地认证;也就是说,认证对密码存储在`Password`栏的`mysql.user`表。本节描述`mysql_native_password`,它实现身份验证对`mysql.user`表使用本机密码哈希算法。对于`mysql_old_password`信息,实现身份验证使用老的(pre-4.1)密码哈希算法,看到部分[6.3.7.3,”The “Old” Native Authentication Plugin”][06.03.07.03]。对于这些密码哈希算法的信息,请参考[6.1.2.4,“MySQL密码哈希算法”][06.01.02.04]。
+MySQL包括两个插件,实现本地认证;也就是说,认证不通过存储密码在`mysql.user`表的`Password`栏。本节描述`mysql_native_password`,它实现身份验证不通过`mysql.user`表使用本地密码哈希算法。关于`mysql_old_password`的更多信息,实现身份验证使用老的(pre-4.1)密码哈希算法,参考[6.3.7.3,”The “Old” Native Authentication Plugin”][06.03.07.03]。关于密码哈希算法的信息,请参考[6.1.2.4,“MySQL密码哈希算法”][06.01.02.04]。
 
-本地认证的mysql本机密码插件是向后兼容的。客户老比MySQL 5.5.7不支持身份验证插件但可以使用本地身份验证协议, 所以他们可以连接到MySQL服务器从5.5.7和及以上的版本。
+`mysql_native_password`身份认证插件是向后兼容的。客户端的版本比MySQL 5.5.7老的话不支持身份验证插件，但可以使用本地身份验证协议, 所以他们可以连接到MySQL服务器使用5.5.7和5.5.7以上的版本。
 
-下面的表显示了插件名称在服务器和客户端。
+下面的表显示了在服务器和客户端插件的名称。
 
 **表6.8. MySQL本机密码身份验证插件**
 
 <table><colgroup><col><col></colgroup><tbody><tr><td scope="row">服务器端插件名字</td><td><code class="literal">mysql_native_password</code></td></tr><tr><td scope="row">客户端插件名字</td><td><code class="literal">mysql_native_password</code></td></tr><tr><td scope="row">库对象文件的名字</td><td>None (plugins are built in)</td></tr></tbody></table>
 </div>
 
-插件在客户机和服务器中都存在形式: 　　
+插件在客户端和服务器端都存在: 　　
 
-* 服务器端插件是建立到服务器,不需要显式地加载,无法被禁用通过卸载它。　
+* 服务器端插件安装在服务器端,不需要显式地加载,无法被禁用除非通过卸载它。　
 　
-* 客户端插件是内置在`libmysqlclient`客户端库为MySQL的5.5.7和可用于任何程序对`libmysqlclient`有关从版本或更新。　　
+* 客户端插件在MySQL 5.5.7版本是内置在`libmysqlclient`客户端库和可用于任何程序对`libmysqlclient`版本或更新的版本。　　
 
-* MySQL客户端程序使用`mysql_native_password`默认情况下。`--default-auth`选项可以用来指定插件明确:
+* MySQL客户端程序使用`mysql_native_password`默认情况下。`--default-auth`选项可以用来明确指定插件:
 
 ```sql
     shell> mysql --default-auth=mysql_native_password ...
@@ -160,9 +160,9 @@ MySQL包括两个插件,实现本地认证;也就是说,认证对密码存储在
 
 >注意
 >
->密码,使用pre -4.1散列方法的安全性也低于密码,使用本机密码哈希算法无效。pre-4.1密码是不支持他们删除在以后的MySQL版本。
+>密码,使用pre -4.1哈希算法的安全性也低于使用本机密码哈希算法的密码。这是可以避免的，pre-4.1密码在以后的MySQL版本中被放弃和不支持。
 
-本地认证的`mysql_old_password`是向后兼容的。客户端版本低于MySQL 5.5.7不支持身份验证插件但使用本地身份验证协议,所以们可以连接到MySQL服务器5.5.7和5.5.7以上版本。
+本地认证的`mysql_old_password`是向后兼容的。客户端版本低于MySQL 5.5.7不支持身份验证插件，但可以使用本地身份验证协议,所以们可以连接到MySQL服务器5.5.7和5.5.7以上版本。
 
 下面的表显示了在服务器和客户端的插件名称。
 
@@ -171,29 +171,29 @@ MySQL包括两个插件,实现本地认证;也就是说,认证对密码存储在
 <table><colgroup><col><col></colgroup><tbody><tr><td scope="row">服务器端插件名字</td><td><code class="literal">mysql_old_password</code></td></tr><tr><td scope="row">客户端插件名字</td><td><code class="literal">mysql_old_password</code></td></tr><tr><td scope="row">库对象文件的名字</td><td>None (plugins are built in)</td></tr></tbody></table>
 </div>
 
-插件在客户机和服务器中都存在形式:
+插件在客户机和服务器中都存在:
 
-* 服务器端插件是建立到服务器,不需要显式地加载,无法被禁用只能卸载它。
+* 服务器端插件是安装在服务器上,不需要显式地加载,无法被禁用只能卸载它。
 
-* 客户端插件是内置在libmysqlclient客户端库为MySQL的5.5.7和可用于任何程序对`libmysqlclient`有关从版本或更新。
+* 库自MySQL的5.5.7起客户端插件是内置在`libmysqlclient`客户端库和任何程序都连接不通过`libmysqlclient`的版本或更新的版本。
 
-* MySQL客户端程序可以使用`—--default-auth`选项来指定`mysql_old_password`插件明确:
+* MySQL客户端程序可以使用`—--default-auth`选项来明确指定`mysql_old_password`插件:
 
 ```sql
     shell> mysql --default-auth=mysql_old_password ...
 ```
 
-对于一般的信息可插入身份验证MySQL,参考[6.3.7,“可插入身份验证”][06.03.07]。
+关于MySQL可插入身份验证的相关信息,参考[6.3.7,“可插入身份验证”][06.03.07]。
 
-#### 6.3.7.4. sha - 256认证的插件 ####
+#### 6.3.7.4. sha-256认证的插件 ####
 
-在MySQL 5.6.6,MySQL提供身份验证插件,实现了sha-256哈希算法的用户帐户的密码。
+在MySQL 5.6.6中,MySQL提供身份验证插件,实现了用户帐户的密码使用sha-256哈希算法。
 
 >**重要提示**
 >
->连接到服务器进行身份验证的使用一个帐户的`sha256_password`插件,您必须使用要么一个SSL连接或简单连接,使用RSA加密密码,后来描述本节。无论哪种方式,使用`sha256_password`插件要求MySQL是由SSL功能.参考[6.3.9”,使用SSL的安全连接“][06.03.09]。
+>连接到服务器的帐户使用的身份验证是`sha256_password`插件,您必须使用一个SSL连接或简单连接,使用RSA加密密码,在后面会讲到。无论哪种方式,使用`sha256_password`插件要求MySQL必须安装SSL功能.参考[6.3.9”,使用SSL的安全连接“][06.03.09]。
 
-下面的表显示了插件名称在服务器和客户端。
+下面的表显示了在服务器和客户端插件的名称。
 
 <div class="table">
 <a name="idm47087463252368"></a><p class="title"><b>Table 6.10. MySQL SHA-256 Authentication Plugin</b></p>
@@ -201,17 +201,17 @@ MySQL包括两个插件,实现本地认证;也就是说,认证对密码存储在
 <table><colgroup><col><col></colgroup><tbody><tr><td scope="row">服务端插件名称</td><td><code class="literal">sha256_password</code></td></tr><tr><td scope="row">客户端插件名称</td><td><code class="literal">sha256_password</code></td></tr><tr><td scope="row">库对象文件名称</td><td>None (plugins are built in)</td></tr></tbody></table>
 </div>
 
-服务器端`sha256_password`插件是建立到服务器,不需要显式地加载,不能被禁用的只能卸载它。类似地,客户不需要指定位置的客户端插件。
+服务器端安装`sha256_password`插件,不需要显式地加载,不能被禁用的只能卸载它。同样的,客户端不需要指定客户端插件的位置。
 
-建立一个帐号,使用`sha-256`密码哈希算法,请采用下列程序。　　
+创建一个帐号,指定他认证方式使用`sha-256`密码哈希算法,参考以下步骤。　　
 
-1.创建帐户和指定它验证使用`sha256_password`插件:
+1.创建帐户和指定验证使用`sha256_password`插件:
 
 ```sql
     CREATE USER 'sha256user'@'localhost' IDENTIFIED WITH sha256_password;
 ```
 
-2.设置`old_passwords`系统变量为2让`PASSWORD()`函数功能对密码字符串使用sha-256哈希算法:
+2.设置`old_passwords`系统变量值为2，让`PASSWORD()`函数功能对密码字符串使用sha-256哈希算法:
 
 ```sql
     SET old_passwords = 2;
@@ -223,23 +223,23 @@ MySQL包括两个插件,实现本地认证;也就是说,认证对密码存储在
     SET PASSWORD FOR 'sha256user'@'localhost' = PASSWORD('sha256P@ss');
 ```
 
-或者,启动服务器身份验证插件的默认设置为sha256_password。对于例子,把这行配置写在服务器选项文件:
+或者,启动服务器身份验证插件的默认设置为`sha256_password`。举一个例子,把这几行配置写在服务器配置文件中:
 
 ```sql
     [mysqld]
 	default-authentication-plugin=sha256_password
 ```
 
-这使`sha256_password`插件默认使用新账户和设置`old_passwords`为2。因此,在创建帐户设置密码的时间使用`IDENTIFIED BY`的项在`CREATE USER`语句:
+这会让新账户默认使用`sha256_password`插件和设置`old_passwords`为2。因此,在创建帐户并设置密码的时候使用`CREATE USER`语句及`IDENTIFIED BY`项:
 
 ```sql
     mysql> CREATE USER 'sha256user2'@'localhost' IDENTIFIED BY 'sha256P@ss2';
 	Query OK, 0 rows affected (0.06 sec)
 ```
 
-在这种情况下,服务器指定`sha256_password`插件帐户和加密密码使用sha-256。(另一个后果是,创建一个帐户,使用一个不同的身份验证插件,您必须指定插件使用一个`IDENTIFIED BY`子句在`CREATE USER`语句,然后将`old_passwords`适当的插件使用前`SET PASSWORD`设置账户密码。)
+在这种情况下,服务器分配`sha256_password`插件给指定帐户和密码加密使用sha-256。(另外一种结果是,创建一个帐户,使用一个不同的身份验证插件,您必须指定插件使用`CREATE USER`语句及`IDENTIFIED BY`子句,然后插件正确地设置`old_passwords`，在使用`SET PASSWORD`设置账户密码前。)
 
-如果`old_passwords`的值而不是2,会报一个错,试图设置密码一个帐户,需要一个sha-256密码:
+如果`old_passwords`的值而不是2,会有一个试图用sha-256设置帐户的密码的报错:
 
 ```sql
     mysql> SET old_passwords = 0;
@@ -251,38 +251,38 @@ MySQL包括两个插件,实现本地认证;也就是说,认证对密码存储在
 
 了解`old_passwords` 和`PASSWORD`更多相关信息，请参考[5.1.4章,“服务器系统变量”][05.01.04],还有[12.13章，“加密和压缩功能”][12.13]。
 
-账户在`mysql.user`表,使用`sha-256`的密码可以被确定为行与`sha256_password`在`plugin`列和`sha-256`密码哈希算法的`authentication_string`列。
+账户在`mysql.user`表中,使用`sha-256`的密码可以被鉴别在`plugin`列的`sha256_password`栏和`sha-256`哈希算法密码在`authentication_string`栏。
 
-MySQL可以建使用yaSSL或OpenSSL和`sha256_password`插件可以使用分布建立或者使用包。默认是使用yaSSL。如果使用OpenSSL MySQL是OpenSSL安装,可以使用RSA加密,并且`sha256_password`实现以下列表中额外的功能。(使这些功能,你也必须遵循RSA配置过程可参考在本节的后面。)
+MySQL可以安装使用yaSSL或OpenSSL和`sha256_password`插件可以使用分布安装也可以使用安装包。默认使用yaSSL。如果MySQL创建使用OpenSSL安装,可以使用RSA加密,并且`sha256_password`实现以下列表中附加功能。(使这些功能,你也必须遵循RSA配置过程可参考本节后面讲述。)
 
-* 它是可能的客户端发送密码到服务器使用RSA加密在客户端连接过程中,所述后。
+* 它是可能的客户端发送密码给服务器，密码在客户端连接过程中使用RSA加密,后面会描述到。
 
-* 服务器公开了两个额外的系统变量,`sha256_password_private_key_path` 和 `sha256_password_public_key_path` 其目的是,数据库管理员设置这些名字的RSA的私人和公共密钥文件在服务器启动。
+* 服务器公开了两个附加的系统变量,`sha256_password_private_key_path` 和 `sha256_password_public_key_path` 其目的是,在服务器启动的时候，数据库管理员会设置RSA的私钥和公钥的文件名。
 
-* 服务器公开了一个状态变量,`Rsa_public_key`,显示了RSA公钥值。
+* 服务器公开了一个状态变量,`Rsa_public_key`,显示RSA公钥值。
 
-* mysql和mysqltest客户程序支持`--server-public-key-path`语句用于明确的指定一个RSA公钥文件。(这个选项被添加在MySQL 5.6.6下的名字`--server-public-key`和在5.6.7更名为`--server-public-key-path`。)
+* `mysql`和`mysqltest`客户程序支持`--server-public-key-path`语句用于明确的指定一个RSA公钥文件。(这个选项在MySQL 5.6.6被添加`--server-public-key`和在5.6.7更名为`--server-public-key-path`。)
 
-对于客户使用`sha256`密码插件,当连接到服务器是绝不会暴露明文密码。密码发生传播情况如何取决于一个SSL连接使用和RSA加密是否可用:
+对于客户使用`sha256_password`插件,当连接到服务器绝不会暴露明文密码。密码怎么传输取决于SSL连接是否被使用和RSA加密是否可用:
 
-* 如果一个SSL连接使用,密码是明文发送但不能监听,因为连接是使用SSL加密。
+* 如果SSL连接被使用,密码是明文发送但不能监听,因为连接是使用SSL加密。
 
-* 如果不能使用SSL连接，但是RSA加密的可用的,被改善的密码是一个未加密的连接,但是密码是rsa加密防止窃听。当服务器收到密码,然后进行解密。使用加密方法登录防止重复攻击。
+* 如果不能使用SSL连接，但是RSA加密的可用的,密码发送使用的是未加密的连接,但是密码是rsa加密的防止窃听。当服务器收到密码,然后进行解密。使用加密方法登录防止重复攻击。
 
-* 如果SSL连接不能被使用,并且RSA加密不可用,`sha256_password`插件使连接尝试失败,因为密码不能以明文发送发送否则会暴露。
+* 如果SSL连接不能被使用,并且RSA加密不可用,会导致`sha256_password`插件连接失败,因为密码不能以明文发送发送否则会暴露密码。
 
-如前所述,RSA密码加密是只提供如果MySQL建成使用OpenSSL。这意味着,在MySQL分布建立使用yaSSL是sha-256密码只有当客户可以使用访问服务器使用一个SSL连接。对于信息使用SSL连接到服务器,请参考[6.3.9章,“使用SSL进行安全连接”][06.03.09]。
+如前所述,只有MySQL建成使用OpenSSL，RSA密码加密才可用。这意味着,在MySQL建立使用yaSSL，只有当客户使用SSL连接访问服务器，sha-256密码才能被使用。关于使用SSL连接到服务器的更多信息,请参考[6.3.9章,“使用SSL进行安全连接”][06.03.09]。
 
-假定MySQL已经建成使用OpenSSL,下列程序描述了如何启用RSA加密的密码在客户端连接过程:
+假定MySQL构建已使用OpenSSL,下列步骤描述了在客户端连接过程中如何启用RSA密码加密:
 
-1. 创建RSA私人和公共密钥文件。运行这些命令同时登录到系统帐户用于运行MySQL服务器,文件将拥有该帐户:
+1. 创建RSA私钥和公钥文件。登录到系统后运行这些命令，同时帐户用于运行MySQL服务器,文件归该帐户拥有:
 
 ```sql
 	openssl genrsa -out mykey.pem 1024
 	openssl rsa -in mykey.pem -pubout > mykey.pub
 ```
 
-2. 设置访问模式的关键文件。应该是可读的私钥只有通过服务器:
+2. 设置key文件的访问模式。私钥应该是只有通过服务器是可读的:
 
 ```sql
     chmod 400 mykey.pem
@@ -294,7 +294,7 @@ MySQL可以建使用yaSSL或OpenSSL和`sha256_password`插件可以使用分布�
     chmod 444 mykey.pub
 ```
 
-3. 在服务器选项文件,配置适当的系统变量的名称关键文件。如果您将文件放入服务器数据目录,您不需要指定完整路径名称:
+3. 在服务器配置文件中,给key文件配置适当的系统变量的名称。如果您将文件放入服务器数据目录,您不需要指定完整路径名称:
 
 ```sql
     [mysqld]
@@ -302,7 +302,7 @@ MySQL可以建使用yaSSL或OpenSSL和`sha256_password`插件可以使用分布�
 	sha256_password_public_key_path=mykey.pub
 ```
 
-如果文件不是在数据目录,或使用他们的位置明确的选项值,使用完整路径名称:
+如果文件不是在数据目录,或使用具体位置选项值,使用完整路径名称:
 
 ```sql
     [mysqld]
@@ -310,7 +310,7 @@ MySQL可以建使用yaSSL或OpenSSL和`sha256_password`插件可以使用分布�
 	sha256_password_public_key_path=/usr/local/mysql/mykey.pub	
 ```
 
-4.重启服务器,然后连接到它并检查`Rsa_public_key`状态变量值。将该值有所不同,这里显示的,但是应该非空的:
+4.重启服务器,然后连接到它并检查`Rsa_public_key`状态变量值。与这里显示的该值会所不同,,但是应该非空的:
 
 ```sql
     mysql> SHOW STATUS LIKE 'Rsa_public_key'\G
@@ -324,30 +324,30 @@ MySQL可以建使用yaSSL或OpenSSL和`sha256_password`插件可以使用分布�
 		-----END PUBLIC KEY-----
 ```
 
-如果该值为空,服务器发现一些问题的关键文件。检查错误日志诊断信息。
+如果该值为空,服务器的key文件有问题。检查错误日志的诊断信息。
 
-在服务器已经配置了RSA密钥文件,客户端能够连接到它使用账户这验证了`sha256_password`插件。正如前面提到的,这种账户可以　使用SSL连接(在这种情况下不使用RSA)或一个普通的连接,加密密码使用RSA。假设下面的讨论,没有使用SSL。连接到服务器不涉及在客户端没有特殊准备。例如:
+在服务器已经配置了RSA密钥文件,客户端能够使用账户连接到它，这验证了`sha256_password`插件。正如前面提到的,这种账户可以使用SSL连接(在这种情况下不使用RSA)或使用RSA加密密码的普通连接,。假设下面的讨论,没有使用SSL，连接到服务器，在客户端不需要特殊准备。例如:
 
 ```sql
     shell> mysql -u sha256user -p
 	Enter password: sha256P@ss
 ```
 
-通过`sha256user`的连接尝试,服务器确定`sha256_password`是适当的身份验证插件和调用它。插件发现连接不使用SSL因而需要密码是使用RSA加密传输。它传递了RSA公钥客户端使用它来加密的密码,并将结果返回给服务器。插件使用了RSA密钥在服务器端解密密码并接受或拒绝连接建立是否密码是正确的。
+使用`sha256user`尝试连接,服务器确定`sha256_password`是可用的身份验证插件和调用它。插件发现连接没有使用SSL，因而需要密码是使用RSA加密传输。它传递了RSA公钥客户端，使用它来加密的密码,并将结果返回给服务器。插件使用了RSA密钥在服务器端解密密码，并接受或拒绝连接请求，取决于密码是否正确的。
 
-服务器发送到客户机的公钥是必要的,但如果一个副本的RSA公钥是可用的客户端主机上,客户端可以用它来保存一个往返在客户机/服务器协议:
+服务器发送到客户机的公钥是这是有必要的,但如果有可用的RSA公钥副本在客户端主机上,客户端保存并使用它，节省了在客户机/服务器协议往返的时间:
 
 ```sql
     shell> mysql -u sha256user -p --server-public-key-path=file_name
 ```
 
-公共密钥值在文件命名为--server-public-key-path选择应该是一样的关键值在服务器端文件命名为sha256_password_public_key_path系统变量。如果密钥文件包含一个有效公钥但值是不正确的,发生拒绝访问的报错。如果密钥文件不包含一个有效的公共密钥,客户端程序不能使用它。在这种情况下,服务器发送公共密钥给客户端如果没有--server-public-key-path选项被指定的话。
+公钥值的文件命名为`--server-public-key-path`选项，在服务器端应该有一样的key值文件名为`sha256_password_public_key_path`系统变量。如果密钥文件包含一个有效公钥，但值是不正确的,发生拒绝访问的报错。如果密钥文件不包含一个有效的公钥,客户端程序不能使用它。在这种情况下,服务器发送公钥给客户端，如果没有`--server-public-key-path`选项被指定的话。
 
 客户端用户可以得到RSA公钥的两种方式:
 
-* 数据库管理员可以提供一份公共密钥文件。
+* 数据库管理员可以提供一份公钥文件。
 
-* 客户端用户可以连接到服务器的一些其他的方法可以使用`SHOW STATUS LIKE 'Rsa_public_key'`语句和保存返回的键值存到一个文件中。
+* 客户端用户通过其他的方式连接到服务器，使用`SHOW STATUS LIKE 'Rsa_public_key'`语句，保存返回的key值到一个文件中。
 
 #### 6.3.7.5. PAM身份验证插件 ####
 
